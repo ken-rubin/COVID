@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 d3.timer((elapsed) => {
 
+                    rotationLambda.value = (parseFloat(rotationLambda.value) + 1) % parseFloat(rotationLambda.max);
                     //projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
                     projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
 
@@ -175,7 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             theValue = 0.0;
                         }
                         const percent = (theValue / maxValue) * distPercent;
-                        return Math.max(percent * 24, 0);
+                        if (isNaN(percent)) {
+
+                            return 0;
+                        }
+                        return Math.max(percent * 24 * (scaleValue.value / 100.0), 0);
                     });
 
                 markerGroup.each(function () {
