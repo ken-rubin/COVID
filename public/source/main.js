@@ -123,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 d3.timer((elapsed) => {
 
-                    rotationLambda.value = (parseFloat(rotationLambda.value) + 0.1) % parseFloat(rotationLambda.max);
                     //projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
                     projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
 
@@ -188,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            /*
+            //
             let downPoint = null;
             const startInteraction = (event) => {
 
@@ -236,8 +235,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         deltaY = (event.clientY - downPoint.y);
                     }
 
-                    config.horizontalTilt = downPoint.horizontalTilt + deltaX / 1.0;
-                    config.verticalTilt = downPoint.verticalTilt - deltaY / 1.0;
+                    rotationLambda.value = parseFloat(rotationLambda.value) + deltaX / 100.0;
+                    scaleValue.value = parseFloat(scaleValue.value) + deltaY / 100.0;
+
+//                    config.horizontalTilt = downPoint.horizontalTilt + deltaX / 1.0;
+//                    config.verticalTilt = downPoint.verticalTilt - deltaY / 1.0;
                 }
                 event.preventDefault();
             };
@@ -251,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener("pointercancel", endInteraction);
             document.addEventListener("pointerout", endInteraction);
             document.addEventListener("pointerleave", endInteraction);
-            */
         });
     } catch (x) {
 
