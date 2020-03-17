@@ -13,8 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const rotationGamma = document.getElementById("rotationGamma");
         const scaleValue = document.getElementById("scaleValue");
         const projectionType = document.getElementById("projectionType");
-        const dataType = document.getElementById("dataType");
-        const dateValue = document.getElementById("dateValue");
+//        const dataType = document.getElementById("dataType");
 
         // Get the data.
         post('/data', { 
@@ -124,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 d3.timer((elapsed) => {
 
-                    rotationLambda.value = (parseFloat(rotationLambda.value) + 1) % parseFloat(rotationLambda.max);
+                    rotationLambda.value = (parseFloat(rotationLambda.value) + 0.1) % parseFloat(rotationLambda.max);
                     //projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
                     projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
 
