@@ -7,16 +7,75 @@ body {
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
 #globe {
 
-    flex: 0 0 auto;
-    width: 800px;
-    height: 800px;
+    flex: 1 0 auto;
+}
 
-    border: 1px solid grey;
-    border-radius: 10px;
+.sectionBlock {
+
+    flex: 0 0 auto;
+    background: rgba(0,0,0,0);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    margin: 4px;
+}
+
+.sectionTitle {
+
+    flex: 1 0 auto;
+    background: rgba(0,0,0,0);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 1px solid grey;
+
+    margin-left: 4px;
+    margin-right: 4px;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.entryBlock {
+
+    flex: 0 0 auto;
+    background: rgba(0,0,0,0);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.entryTitle {
+
+    flex: 0 0 auto;
+    width: 100px;
+    background: rgba(0,0,0,0);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.entryInput {
+
+    flex: 1 0 auto;
+    background: rgba(0,0,0,0);
+    margin-left: 4px;
+    margin-right: 4px;
 }

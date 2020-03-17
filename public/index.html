@@ -19,5 +19,77 @@
     </head>
     <body>
         <svg id="globe"></svg>
+        <div class="sectionBlock">
+            <div class="sectionTitle">~ rotation ~</div>
+            <div class="entryBlock">
+                <div class="entryTitle">Λ</div>
+                <input class="entryInput" id="rotationLambda" type="range" min="0" max="359" step="0.1" value="0" />
+            </div>
+            <div class="entryBlock">
+                <div class="entryTitle">Φ</div>
+                <input class="entryInput" id="rotationPhi" type="range" min="-90" max="90" step="0.1" value="0" />
+            </div>
+            <div class="entryBlock">
+                <div class="entryTitle">Γ</div>
+                <input class="entryInput" id="rotationGamma" type="range" min="-90" max="90" step="0.1" value="0" />
+            </div>
+        </div>
+
+        <div class="sectionBlock">
+            <div class="sectionTitle">~ scale ~</div>
+            <div class="entryBlock">
+                <input class="entryInput" id="scaleValue" type="range" min="0" max="400" step="0.1" value="90" />
+            </div>
+        </div>
+
+        <div class="sectionBlock">
+            <div class="sectionTitle">~ projection ~</div>
+            <div class="entryBlock">
+                <select class="entryInput" id="projectionType">
+                    <option value="geoAzimuthalEqualArea">azimuthal equal area</option>
+                    <option value="geoAzimuthalEquidistant">azimuthal equidistant</option>
+                    <option value="geoConicConformal">conic conformal</option>
+                    <option value="geoConicEqualArea">conic equal area</option>
+                    <option value="geoEisenlohr">eisenlohr</option>
+                    <option value="geoEquirectangular">equirectangular</option>
+                    <option value="geoGnomonic">gnomonic</option>
+                    <option value="geoGringorten">gringorten</option>
+                    <option value="geoGuyou">guyou</option>
+                    <option value="geoHealpix">healpix</option>
+                    <option value="geoInterruptedHomolosine">interrupted homolosine</option>
+                    <option value="geoLarrivee">larrivee</option>
+                    <option value="geoMercator">mercator</option>
+                    <option value="geoMiller">miller</option>
+                    <option value="geoMollweide">mollweide</option>
+                    <option value="geoNaturalEarth1">natural earth 1</option>
+                    <option value="geoNicolosi">nicolosi</option>
+                    <option value="geoOrthographic" selected>orthographic</option>
+                    <option value="geoPolyconic">polyconic</option>
+                    <option value="geoSinusoidal">sinusoidal</option>
+                    <option value="geoStereographic">stereographic</option>
+                    <option value="geoTransverseMercator">transverse Mercator</option>
+                    <option value="geoVanDerGrinten4">van der grinten 4</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="sectionBlock">
+            <div class="sectionTitle">~ data ~</div>
+            <div class="entryBlock">
+                <select class="entryInput" id="dataType">
+                    <option value="confirmed" selected>confirmed</option>
+                    <option value="deaths">deaths</option>
+                    <option value="recovered">recovered</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="sectionBlock">
+            <div class="sectionTitle">~ date ~</div>
+            <div class="entryBlock">
+                <select class="entryInput" id="dateValue">
+                </select>
+            </div>
+        </div>
     </body>
 </html>

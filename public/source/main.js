@@ -7,29 +7,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
 
+        // Grab references to the input fields.
+        const rotationLambda = document.getElementById("rotationLambda");
+        const rotationPhi = document.getElementById("rotationPhi");
+        const rotationGamma = document.getElementById("rotationGamma");
+        const scaleValue = document.getElementById("scaleValue");
+        const projectionType = document.getElementById("projectionType");
+        const dataType = document.getElementById("dataType");
+        const dateValue = document.getElementById("dateValue");
+
+        // Get the data.
         post('/data', { 
 
-            answer: 42 
+            type: "confirmed" 
         }).then((data) => {
 
+            // The dates keys is the collection of dates for which there is data.
             const dates = Object.keys(data[0].dates);
 
-            // Get max value.
+            // Get max value across all dates.
             let maxValue = 0;
             data.forEach((item) => {
 
+                // The last date is always the highest.
                 const itemValue = item.dates[dates[dates.length - 1]];
+
+                // Take the log because ...Hubei....
                 item.logValue = Math.log(itemValue);
+
+                // Remember the max.
                 if (item.logValue > maxValue) {
 
                     maxValue = item.logValue;
                 }
             });
 
-            const width = 800;
-            const height = 800;
+            const svg = d3.select('svg');
+            let center = [0, 0];
+            let projection = d3.geoOrthographic();
 
-            const center = [width / 2.0, height / 2.0];
+            const handleResize = () => {
+
+                const element = document.getElementById("globe");
+                const rect = element.getBoundingClientRect(); // get the bounding rectangle
+                center[0] = rect.width / 2;
+                center[1] = rect.height / 2;
+
+                projection.translate(center);
+                projection.scale(Math.min(center[0] * 0.9, 
+                    center[1] * 0.9));
+            };
+
+            // Wire project type input.
+            projectionType.addEventListener("input", (event) => {
+
+                // .
+                svg.selectAll("*").remove();
+
+                const projectionValue = event.target.options[event.target.selectedIndex].value;
+                projection = d3[projectionValue]();
+                handleResize();
+
+                markerGroup = svg.append('g');
+                path = d3.geoPath().projection(projection);
+                drawGlobe();
+                drawGraticule();
+            });
+
+            window.addEventListener("resize", handleResize);
+            handleResize();
 
           	const config = {
 
@@ -37,16 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 verticalTilt: -30,
                 horizontalTilt: 0
             };
-            const svg = d3.select('svg');
-            const markerGroup = svg.append('g');
-            const projection = d3.geoOrthographic(); // geoInterruptedHomolosine geoVanDerGrinten4 geoSinusoidal geoPolyconic geoNicolosi geoMollweide geoMiller geoLarrivee geoHealpix geoGuyou geoGringorten geoEisenlohr geoNaturalEarth1 geoTransverseMercator geoMercator geoEquirectangular geoConicEqualArea geoConicConformal geoAzimuthalEqualArea geoAzimuthalEquidistant geoGnomonic geoStereographic
-            projection.translate(center);
-            projection.scale(300);
-            const path = d3.geoPath().projection(projection);
+            let markerGroup = svg.append('g');
+            let path = d3.geoPath().projection(projection);
 
-            drawGlobe();    
+            drawGlobe();
             drawGraticule();
-            enableRotation();    
+            enableRotation();
 
             function drawGlobe() {  
                 d3.queue()
@@ -82,7 +124,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 d3.timer((elapsed) => {
 
-                    projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
+                    //projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
+                    projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
+
+                    projection.scale(Math.min(center[0] * (scaleValue.value / 100.0), 
+                        center[1] * (scaleValue.value / 100.0)));
+
                     svg.selectAll("path").attr("d", path);
                     drawMarkers();
                 });
@@ -120,7 +167,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         const gdistance = d3.geoDistance(coordinate, projection.invert(center));
                         const distPercent = 1.0 - (gdistance / (Math.PI / 2.0)) * 0.95;
 
-                        const percent = (d.logValue / maxValue) * distPercent ;
+                        let theValue = d.logValue;
+                        if (theValue === -Infinity || 
+                            theValue === Infinity ||
+                            isNaN(theValue)) {
+
+                            theValue = 0.0;
+                        }
+                        const percent = (theValue / maxValue) * distPercent;
                         return Math.max(percent * 24, 0);
                     });
 
@@ -130,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            // .
+            /*
             let downPoint = null;
             const startInteraction = (event) => {
 
@@ -193,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener("pointercancel", endInteraction);
             document.addEventListener("pointerout", endInteraction);
             document.addEventListener("pointerleave", endInteraction);
+            */
         });
     } catch (x) {
 
