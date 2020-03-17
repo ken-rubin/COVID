@@ -1,0 +1,597 @@
+
+.container {
+
+    display: grid;
+
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.onebyone {
+
+    grid-template: repeat(1, 1fr) / repeat(1, 1fr)
+}
+.onebytwo {
+
+    grid-template: repeat(1, 1fr) / repeat(2, 1fr)
+}
+.onebythree {
+
+    grid-template: repeat(1, 1fr) / repeat(3, 1fr)
+}
+.onebyfour {
+
+    grid-template: repeat(1, 1fr) / repeat(4, 1fr)
+}
+.onebyfive {
+
+    grid-template: repeat(1, 1fr) / repeat(5, 1fr)
+}
+.onebysix {
+
+    grid-template: repeat(1, 1fr) / repeat(6, 1fr)
+}
+.onebyseven {
+
+    grid-template: repeat(1, 1fr) / repeat(7, 1fr)
+}
+.onebyeight {
+
+    grid-template: repeat(1, 1fr) / repeat(8, 1fr)
+}
+.onebynine {
+
+    grid-template: repeat(1, 1fr) / repeat(9, 1fr)
+}
+.onebyten {
+
+    grid-template: repeat(1, 1fr) / repeat(10, 1fr)
+}
+.onebyeleven {
+
+    grid-template: repeat(1, 1fr) / repeat(11, 1fr)
+}
+.onebytwelve {
+
+    grid-template: repeat(1, 1fr) / repeat(12, 1fr)
+}
+
+.twobyone {
+
+    grid-template: repeat(2, 1fr) / repeat(1, 1fr)
+}
+.twobytwo {
+
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr)
+}
+.twobythree {
+
+    grid-template: repeat(2, 1fr) / repeat(3, 1fr)
+}
+.twobyfour {
+
+    grid-template: repeat(2, 1fr) / repeat(4, 1fr)
+}
+.twobyfive {
+
+    grid-template: repeat(2, 1fr) / repeat(5, 1fr)
+}
+.twobysix {
+
+    grid-template: repeat(2, 1fr) / repeat(6, 1fr)
+}
+.twobyseven {
+
+    grid-template: repeat(2, 1fr) / repeat(7, 1fr)
+}
+.twobyeight {
+
+    grid-template: repeat(2, 1fr) / repeat(8, 1fr)
+}
+.twobynine {
+
+    grid-template: repeat(2, 1fr) / repeat(9, 1fr)
+}
+.twobyten {
+
+    grid-template: repeat(2, 1fr) / repeat(10, 1fr)
+}
+.twobyeleven {
+
+    grid-template: repeat(2, 1fr) / repeat(11, 1fr)
+}
+.twobytwelve {
+
+    grid-template: repeat(2, 1fr) / repeat(12, 1fr)
+}
+
+.threebyone {
+
+    grid-template: repeat(3, 1fr) / repeat(1, 1fr)
+}
+.threebytwo {
+
+    grid-template: repeat(3, 1fr) / repeat(2, 1fr)
+}
+.threebythree {
+
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr)
+}
+.threebyfour {
+
+    grid-template: repeat(3, 1fr) / repeat(4, 1fr)
+}
+.threebyfive {
+
+    grid-template: repeat(3, 1fr) / repeat(5, 1fr)
+}
+.threebysix {
+
+    grid-template: repeat(3, 1fr) / repeat(6, 1fr)
+}
+.threebyseven {
+
+    grid-template: repeat(3, 1fr) / repeat(7, 1fr)
+}
+.threebyeight {
+
+    grid-template: repeat(3, 1fr) / repeat(8, 1fr)
+}
+.threebynine {
+
+    grid-template: repeat(3, 1fr) / repeat(9, 1fr)
+}
+.threebyten {
+
+    grid-template: repeat(3, 1fr) / repeat(10, 1fr)
+}
+.threebyeleven {
+
+    grid-template: repeat(3, 1fr) / repeat(11, 1fr)
+}
+.threebytwelve {
+
+    grid-template: repeat(3, 1fr) / repeat(12, 1fr)
+}
+
+.fourbyone {
+
+    grid-template: repeat(4, 1fr) / repeat(1, 1fr)
+}
+.fourbytwo {
+
+    grid-template: repeat(4, 1fr) / repeat(2, 1fr)
+}
+.fourbythree {
+
+    grid-template: repeat(4, 1fr) / repeat(3, 1fr)
+}
+.fourbyfour {
+
+    grid-template: repeat(4, 1fr) / repeat(4, 1fr)
+}
+.fourbyfive {
+
+    grid-template: repeat(4, 1fr) / repeat(5, 1fr)
+}
+.fourbysix {
+
+    grid-template: repeat(4, 1fr) / repeat(6, 1fr)
+}
+.fourbyseven {
+
+    grid-template: repeat(4, 1fr) / repeat(7, 1fr)
+}
+.fourbyeight {
+
+    grid-template: repeat(4, 1fr) / repeat(8, 1fr)
+}
+.fourbynine {
+
+    grid-template: repeat(4, 1fr) / repeat(9, 1fr)
+}
+.fourbyten {
+
+    grid-template: repeat(4, 1fr) / repeat(10, 1fr)
+}
+.fourbyeleven {
+
+    grid-template: repeat(4, 1fr) / repeat(11, 1fr)
+}
+.fourbytwelve {
+
+    grid-template: repeat(4, 1fr) / repeat(12, 1fr)
+}
+
+.fivebyone {
+
+    grid-template: repeat(5, 1fr) / repeat(1, 1fr)
+}
+.fivebytwo {
+
+    grid-template: repeat(5, 1fr) / repeat(2, 1fr)
+}
+.fivebythree {
+
+    grid-template: repeat(5, 1fr) / repeat(3, 1fr)
+}
+.fivebyfour {
+
+    grid-template: repeat(5, 1fr) / repeat(4, 1fr)
+}
+.fivebyfive {
+
+    grid-template: repeat(5, 1fr) / repeat(5, 1fr)
+}
+.fivebysix {
+
+    grid-template: repeat(5, 1fr) / repeat(6, 1fr)
+}
+.fivebyseven {
+
+    grid-template: repeat(5, 1fr) / repeat(7, 1fr)
+}
+.fivebyeight {
+
+    grid-template: repeat(5, 1fr) / repeat(8, 1fr)
+}
+.fivebynine {
+
+    grid-template: repeat(5, 1fr) / repeat(9, 1fr)
+}
+.fivebyten {
+
+    grid-template: repeat(5, 1fr) / repeat(10, 1fr)
+}
+.fivebyeleven {
+
+    grid-template: repeat(5, 1fr) / repeat(11, 1fr)
+}
+.fivebytwelve {
+
+    grid-template: repeat(5, 1fr) / repeat(12, 1fr)
+}
+
+.sixbyone {
+
+    grid-template: repeat(6, 1fr) / repeat(1, 1fr)
+}
+.sixbytwo {
+
+    grid-template: repeat(6, 1fr) / repeat(2, 1fr)
+}
+.sixbythree {
+
+    grid-template: repeat(6, 1fr) / repeat(3, 1fr)
+}
+.sixbyfour {
+
+    grid-template: repeat(6, 1fr) / repeat(4, 1fr)
+}
+.sixbyfive {
+
+    grid-template: repeat(6, 1fr) / repeat(5, 1fr)
+}
+.sixbysix {
+
+    grid-template: repeat(6, 1fr) / repeat(6, 1fr)
+}
+.sixbyseven {
+
+    grid-template: repeat(6, 1fr) / repeat(7, 1fr)
+}
+.sixbyeight {
+
+    grid-template: repeat(6, 1fr) / repeat(8, 1fr)
+}
+.sixbynine {
+
+    grid-template: repeat(6, 1fr) / repeat(9, 1fr)
+}
+.sixbyten {
+
+    grid-template: repeat(6, 1fr) / repeat(10, 1fr)
+}
+.sixbyeleven {
+
+    grid-template: repeat(6, 1fr) / repeat(11, 1fr)
+}
+.sixbytwelve {
+
+    grid-template: repeat(6, 1fr) / repeat(12, 1fr)
+}
+
+.sevenbyone {
+
+    grid-template: repeat(7, 1fr) / repeat(1, 1fr)
+}
+.sevenbytwo {
+
+    grid-template: repeat(7, 1fr) / repeat(2, 1fr)
+}
+.sevenbythree {
+
+    grid-template: repeat(7, 1fr) / repeat(3, 1fr)
+}
+.sevenbyfour {
+
+    grid-template: repeat(7, 1fr) / repeat(4, 1fr)
+}
+.sevenbyfive {
+
+    grid-template: repeat(7, 1fr) / repeat(5, 1fr)
+}
+.sevenbysix {
+
+    grid-template: repeat(7, 1fr) / repeat(6, 1fr)
+}
+.sevenbyseven {
+
+    grid-template: repeat(7, 1fr) / repeat(7, 1fr)
+}
+.sevenbyeight {
+
+    grid-template: repeat(7, 1fr) / repeat(8, 1fr)
+}
+.sevenbynine {
+
+    grid-template: repeat(7, 1fr) / repeat(9, 1fr)
+}
+.sevenbyten {
+
+    grid-template: repeat(7, 1fr) / repeat(10, 1fr)
+}
+.sevenbyeleven {
+
+    grid-template: repeat(7, 1fr) / repeat(11, 1fr)
+}
+.sevenbytwelve {
+
+    grid-template: repeat(7, 1fr) / repeat(12, 1fr)
+}
+
+.eightbyone {
+
+    grid-template: repeat(8, 1fr) / repeat(1, 1fr)
+}
+.eightbytwo {
+
+    grid-template: repeat(8, 1fr) / repeat(2, 1fr)
+}
+.eightbythree {
+
+    grid-template: repeat(8, 1fr) / repeat(3, 1fr)
+}
+.eightbyfour {
+
+    grid-template: repeat(8, 1fr) / repeat(4, 1fr)
+}
+.eightbyfive {
+
+    grid-template: repeat(8, 1fr) / repeat(5, 1fr)
+}
+.eightbysix {
+
+    grid-template: repeat(8, 1fr) / repeat(6, 1fr)
+}
+.eightbyseven {
+
+    grid-template: repeat(8, 1fr) / repeat(7, 1fr)
+}
+.eightbyeight {
+
+    grid-template: repeat(8, 1fr) / repeat(8, 1fr)
+}
+.eightbynine {
+
+    grid-template: repeat(8, 1fr) / repeat(9, 1fr)
+}
+.eightbyten {
+
+    grid-template: repeat(8, 1fr) / repeat(10, 1fr)
+}
+.eightbyeleven {
+
+    grid-template: repeat(8, 1fr) / repeat(11, 1fr)
+}
+.eightbytwelve {
+
+    grid-template: repeat(8, 1fr) / repeat(12, 1fr)
+}
+
+.ninebyone {
+
+    grid-template: repeat(9, 1fr) / repeat(1, 1fr)
+}
+.ninebytwo {
+
+    grid-template: repeat(9, 1fr) / repeat(2, 1fr)
+}
+.ninebythree {
+
+    grid-template: repeat(9, 1fr) / repeat(3, 1fr)
+}
+.ninebyfour {
+
+    grid-template: repeat(9, 1fr) / repeat(4, 1fr)
+}
+.ninebyfive {
+
+    grid-template: repeat(9, 1fr) / repeat(5, 1fr)
+}
+.ninebysix {
+
+    grid-template: repeat(9, 1fr) / repeat(6, 1fr)
+}
+.ninebyseven {
+
+    grid-template: repeat(9, 1fr) / repeat(7, 1fr)
+}
+.ninebyeight {
+
+    grid-template: repeat(9, 1fr) / repeat(8, 1fr)
+}
+.ninebynine {
+
+    grid-template: repeat(9, 1fr) / repeat(9, 1fr)
+}
+.ninebyten {
+
+    grid-template: repeat(9, 1fr) / repeat(10, 1fr)
+}
+.ninebyeleven {
+
+    grid-template: repeat(9, 1fr) / repeat(11, 1fr)
+}
+.ninebytwelve {
+
+    grid-template: repeat(9, 1fr) / repeat(12, 1fr)
+}
+
+.tenbyone {
+
+    grid-template: repeat(10, 1fr) / repeat(1, 1fr)
+}
+.tenbytwo {
+
+    grid-template: repeat(10, 1fr) / repeat(2, 1fr)
+}
+.tenbythree {
+
+    grid-template: repeat(10, 1fr) / repeat(3, 1fr)
+}
+.tenbyfour {
+
+    grid-template: repeat(10, 1fr) / repeat(4, 1fr)
+}
+.tenbyfive {
+
+    grid-template: repeat(10, 1fr) / repeat(5, 1fr)
+}
+.tenbysix {
+
+    grid-template: repeat(10, 1fr) / repeat(6, 1fr)
+}
+.tenbyseven {
+
+    grid-template: repeat(10, 1fr) / repeat(7, 1fr)
+}
+.tenbyeight {
+
+    grid-template: repeat(10, 1fr) / repeat(8, 1fr)
+}
+.tenbynine {
+
+    grid-template: repeat(10, 1fr) / repeat(9, 1fr)
+}
+.tenbyten {
+
+    grid-template: repeat(10, 1fr) / repeat(10, 1fr)
+}
+.tenbyeleven {
+
+    grid-template: repeat(10, 1fr) / repeat(11, 1fr)
+}
+.tenbytwelve {
+
+    grid-template: repeat(10, 1fr) / repeat(12, 1fr)
+}
+
+.elevenbyone {
+
+    grid-template: repeat(11, 1fr) / repeat(1, 1fr)
+}
+.elevenbytwo {
+
+    grid-template: repeat(11, 1fr) / repeat(2, 1fr)
+}
+.elevenbythree {
+
+    grid-template: repeat(11, 1fr) / repeat(3, 1fr)
+}
+.elevenbyfour {
+
+    grid-template: repeat(11, 1fr) / repeat(4, 1fr)
+}
+.elevenbyfive {
+
+    grid-template: repeat(11, 1fr) / repeat(5, 1fr)
+}
+.elevenbysix {
+
+    grid-template: repeat(11, 1fr) / repeat(6, 1fr)
+}
+.elevenbyseven {
+
+    grid-template: repeat(11, 1fr) / repeat(7, 1fr)
+}
+.elevenbyeight {
+
+    grid-template: repeat(11, 1fr) / repeat(8, 1fr)
+}
+.elevenbynine {
+
+    grid-template: repeat(11, 1fr) / repeat(9, 1fr)
+}
+.elevenbyten {
+
+    grid-template: repeat(11, 1fr) / repeat(10, 1fr)
+}
+.elevenbyeleven {
+
+    grid-template: repeat(11, 1fr) / repeat(11, 1fr)
+}
+.elevenbytwelve {
+
+    grid-template: repeat(11, 1fr) / repeat(12, 1fr)
+}
+
+.twelvebyone {
+
+    grid-template: repeat(12, 1fr) / repeat(1, 1fr)
+}
+.twelvebytwo {
+
+    grid-template: repeat(12, 1fr) / repeat(2, 1fr)
+}
+.twelvebythree {
+
+    grid-template: repeat(12, 1fr) / repeat(3, 1fr)
+}
+.twelvebyfour {
+
+    grid-template: repeat(12, 1fr) / repeat(4, 1fr)
+}
+.twelvebyfive {
+
+    grid-template: repeat(12, 1fr) / repeat(5, 1fr)
+}
+.twelvebysix {
+
+    grid-template: repeat(12, 1fr) / repeat(6, 1fr)
+}
+.twelvebyseven {
+
+    grid-template: repeat(12, 1fr) / repeat(7, 1fr)
+}
+.twelvebyeight {
+
+    grid-template: repeat(12, 1fr) / repeat(8, 1fr)
+}
+.twelvebynine {
+
+    grid-template: repeat(12, 1fr) / repeat(9, 1fr)
+}
+.twelvebyten {
+
+    grid-template: repeat(12, 1fr) / repeat(10, 1fr)
+}
+.twelvebyeleven {
+
+    grid-template: repeat(12, 1fr) / repeat(11, 1fr)
+}
+.twelvebytwelve {
+
+    grid-template: repeat(12, 1fr) / repeat(12, 1fr)
+}

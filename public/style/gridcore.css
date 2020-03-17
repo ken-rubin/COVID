@@ -1,0 +1,11 @@
+@import url("griditemcore.css");
+@import url("gridcontainercore.css");
+
+.backgroundlayer {
+
+    z-index: 1;
+}
+.foregroundlayer {
+
+    z-index: 2;
+}
