@@ -124,10 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 d3.timer((elapsed) => {
 
                     //projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
-                    projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
+                    //projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
 
-                    projection.scale(Math.min(center[0] * (scaleValue.value / 100.0), 
-                        center[1] * (scaleValue.value / 100.0)));
+                    //projection.scale(Math.min(center[0] * (scaleValue.value / 100.0), 
+                    //    center[1] * (scaleValue.value / 100.0)));
 
                     svg.selectAll("path").attr("d", path);
                     drawMarkers();
@@ -187,7 +187,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            //
+            let v0, q0, r0;
+  
+  function dragstarted() {
+    v0 = versor.cartesian(projection.invert([d3.event.x, d3.event.y]));
+    q0 = versor(r0 = projection.rotate());
+  }
+  
+  function dragged() {
+    const v1 = versor.cartesian(projection.rotate(r0).invert([d3.event.x, d3.event.y]));
+    const q1 = versor.multiply(q0, versor.delta(v0, v1));
+    projection.rotate(versor.rotation(q1));
+  }
+  
+  d3.selectAll("path").call(d3.drag().on("start", dragstarted).on("drag", dragged));
+
+            /*
             let downPoint = null;
             const startInteraction = (event) => {
 
@@ -252,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener("pointerup", endInteraction);
             document.addEventListener("pointercancel", endInteraction);
             document.addEventListener("pointerout", endInteraction);
-            document.addEventListener("pointerleave", endInteraction);
+            document.addEventListener("pointerleave", endInteraction);*/
         });
     } catch (x) {
 
