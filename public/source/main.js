@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const svg = d3.select('svg');
             let center = [0, 0];
             let projection = d3.geoOrthographic();
+            let zoomFactor = 1.0;
 
             const handleResize = () => {
 
@@ -53,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 center[1] = rect.height / 2;
 
                 projection.translate(center);
-                projection.scale(Math.min(center[0] * 0.9, 
-                    center[1] * 0.9));
+                projection.scale(Math.min(center[0] * 0.9 * zoomFactor, 
+                    center[1] * 0.9 * zoomFactor));
             };
 
             // Wire project type input.
@@ -123,12 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 d3.timer((elapsed) => {
 
-                    //projection.rotate([config.speed * elapsed, config.verticalTilt, config.horizontalTilt]);
-                    //projection.rotate([rotationLambda.value, rotationPhi.value, rotationGamma.value]);
-
-                    //projection.scale(Math.min(center[0] * (scaleValue.value / 100.0), 
-                    //    center[1] * (scaleValue.value / 100.0)));
-
+                    const initialRotation = projection.rotate();
+                    initialRotation[0] = config.speed * elapsed;
+                    projection.rotate(initialRotation);
                     svg.selectAll("path").attr("d", path);
                     drawMarkers();
                 });
@@ -178,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             return 0;
                         }
-                        return Math.max(percent * 24 * (scaleValue.value / 100.0), 0);
+                        return Math.max(percent * 24 * (scaleValue.value / 100.0) * zoomFactor, 0);
                     });
 
                 markerGroup.each(function () {
@@ -189,85 +187,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let v0, q0, r0;
   
-  function dragstarted() {
-    v0 = versor.cartesian(projection.invert([d3.event.x, d3.event.y]));
-    q0 = versor(r0 = projection.rotate());
-  }
-  
-  function dragged() {
-    const v1 = versor.cartesian(projection.rotate(r0).invert([d3.event.x, d3.event.y]));
-    const q1 = versor.multiply(q0, versor.delta(v0, v1));
-    projection.rotate(versor.rotation(q1));
-  }
-  
-  d3.selectAll("path").call(d3.drag().on("start", dragstarted).on("drag", dragged));
+            function dragstarted() {
+        
+                v0 = versor.cartesian(projection.invert([d3.event.x, d3.event.y]));
+                q0 = versor(r0 = projection.rotate());
+            }
 
-            /*
-            let downPoint = null;
-            const startInteraction = (event) => {
+            function dragged() {
 
-                event.target.setPointerCapture(event.pointerId);
+                const v1 = versor.cartesian(projection.rotate(r0).invert([d3.event.x, d3.event.y]));
+                const q1 = versor.multiply(q0, versor.delta(v0, v1));
+                projection.rotate(versor.rotation(q1));
+            }
 
-                if (event.changedTouches && event.changedTouches.length) {
+            d3.selectAll("path").call(d3.drag().on("start", dragstarted).on("drag", dragged));
+            
+            svg.call(d3.zoom().on("zoom", function () {
 
-                    downPoint = {
+                zoomFactor = d3.event.transform.k;
+                handleResize();
+            }));
 
-                        x: event.changedTouches[0].clientX,
-                        y: event.changedTouches[0].clientX,
-                        horizontalTilt: config.horizontalTilt,
-                        verticalTilt: config.verticalTilt
-                    };
-                } else {
 
-                    downPoint = {
-
-                        x: event.clientX,
-                        y: event.clientY,
-                        horizontalTilt: config.horizontalTilt,
-                        verticalTilt: config.verticalTilt
-                    };
-                }
-                event.preventDefault();
-            };
-            const endInteraction = (event) => {
-
-                downPoint = null;
-                event.preventDefault();
-            };
-            const moveInteraction = (event) => {
-
-                if (downPoint) {
-
-                    let deltaX = 0;
-                    let deltaY = 0;
-                    if (event.changedTouches && event.changedTouches.length) {
-
-                        deltaX = (event.changedTouches[0].clientX - downPoint.x);
-                        deltaY = (event.changedTouches[0].clientY - downPoint.y);
-                    } else {
-
-                        deltaX = (event.clientX - downPoint.x);
-                        deltaY = (event.clientY - downPoint.y);
-                    }
-
-                    rotationLambda.value = parseFloat(rotationLambda.value) + deltaX / 100.0;
-                    scaleValue.value = parseFloat(scaleValue.value) + deltaY / 100.0;
-
-//                    config.horizontalTilt = downPoint.horizontalTilt + deltaX / 1.0;
-//                    config.verticalTilt = downPoint.verticalTilt - deltaY / 1.0;
-                }
-                event.preventDefault();
-            };
-
-            // .
-            document.addEventListener("pointerdown", startInteraction);
-
-            document.addEventListener("pointermove", moveInteraction);
-
-            document.addEventListener("pointerup", endInteraction);
-            document.addEventListener("pointercancel", endInteraction);
-            document.addEventListener("pointerout", endInteraction);
-            document.addEventListener("pointerleave", endInteraction);*/
         });
     } catch (x) {
 
