@@ -204,11 +204,10 @@ document.addEventListener("DOMContentLoaded", () => {
             
             svg.call(d3.zoom()
                 .extent([[0, 0], [center[0] * 2, center[1] * 2]])
-                .scaleExtent([0.1, 8])
+                .scaleExtent([0.25, 4])
                 .on("zoom", function () {
 
-                    zoomFactor = d3.event.transform.k;
-                    handleResize();
+                    svg.attr("transform", `scale(${d3.event.transform.k})`);
                 }));
 
 
