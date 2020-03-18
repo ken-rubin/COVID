@@ -202,11 +202,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             d3.selectAll("path").call(d3.drag().on("start", dragstarted).on("drag", dragged));
             
-            svg.call(d3.zoom().on("zoom", function () {
+            svg.call(d3.zoom()
+                .extent([[0, 0], [center[0] * 2, center[1] * 2]])
+                .scaleExtent([0.1, 8])
+                .on("zoom", function () {
 
-                zoomFactor = d3.event.transform.k;
-                handleResize();
-            }));
+                    zoomFactor = d3.event.transform.k;
+                    handleResize();
+                }));
 
 
         });
