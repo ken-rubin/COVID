@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var targetScaleSetTime = null;
         var targetScaleInterpolateTime = 1000;
         var scaleCookie = null;
-        var scaleResetTime = 3000;
+        var scaleResetTime = 7500;
         var zoomInScaleFactor = 6;
 
         var sphere = {
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 context.fillRect(chartLeft + titleLeft, chartTop + titleTop, titleWidth, titleHeight);
                 context.textBaseline = "middle";
                 context.textAlign = "center";
-                context.fillStyle = "grey";
+                context.fillStyle = "white";
                 context.font = titleFont;
                 context.fillText(`${activeDot["Country/Region"]} ${activeDot["Province/State"]}`, 
                     chartLeft + titleLeft + titleWidth / 2, 
