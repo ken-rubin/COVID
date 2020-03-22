@@ -13,7 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
         var sourceRotation = null;
         var targetRotation = null;
         var targetRotationSetTime = null;
-        var targetRotationInterpolateTime = 300;
+        var targetRotationInterpolateTime = 500;
+        var activeDot = null;
+        var baseScale = null;
+        var sourceScale = null;
+        var targetScale = null;
+        var targetScaleSetTime = null;
+        var targetScaleInterpolateTime = 1000;
+        var scaleCookie = null;
+        var scaleResetTime = 3000;
+        var zoomInScaleFactor = 6;
 
         var sphere = {
             
@@ -68,6 +77,41 @@ document.addEventListener("DOMContentLoaded", () => {
             var land = topojson.feature(world, world.objects.countries);
             var grid = graticule();
 
+            const drawChart = () => {
+
+                // Define chart bounds.
+                var windowWidth = window.innerWidth;
+                var windowHeight = window.innerHeight;
+
+                var chartLeft = windowWidth * 0.1;
+                var chartTop = windowHeight * 0.05;
+                var chartWidth = windowWidth * 0.8;
+                var chartHeight = windowHeight * 0.2;
+
+                var titleLeft = chartWidth * 0.001;
+                var titleTop = chartHeight * 0.005;
+                var titleWidth = chartWidth * 0.998;
+                var titleHeight = chartHeight * 0.1;
+
+                var titleFont = `${titleHeight.toFixed(2)}px Arial`;
+
+                // Background.
+                context.fillStyle = "rgba(0,0,0,0.4)";
+                context.fillRect(chartLeft, chartTop, chartWidth, chartHeight);
+
+                // Title.
+                context.fillStyle = "rgba(0,0,0,0.4)";
+                context.fillRect(chartLeft + titleLeft, chartTop + titleTop, titleWidth, titleHeight);
+                context.textBaseline = "middle";
+                context.textAlign = "center";
+                context.fillStyle = "grey";
+                context.font = titleFont;
+                context.fillText(`${activeDot["Country/Region"]} ${activeDot["Province/State"]}`, 
+                    chartLeft + titleLeft + titleWidth / 2, 
+                    chartTop + titleTop + titleHeight / 2,
+                    200);
+            };
+
             // Draw the world.
             function drawWorld() {
 
@@ -94,7 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 context.strokeStyle = '#fff';
                 context.stroke();
 
-                context.fillStyle = "rgba(96, 0, 0, 0.75";
                 data.forEach((datum) => {
 
                     const coordinate = [datum.Long, datum.Lat];
@@ -119,12 +162,28 @@ document.addEventListener("DOMContentLoaded", () => {
                             return 0;
                         }
 
+                        var radius = Math.max(percent * 16 * (scale / 250), 0);
+                        if (datum === activeDot) {
+
+                            context.fillStyle = "rgba(196, 196, 0, 1";
+                        } else {
+
+                            context.fillStyle = "rgba(96, 0, 0, 0.25";
+                        }
+
                         context.beginPath();
                         context.arc(pixelCoordinates[0], pixelCoordinates[1], 
-                            Math.max(percent * 16 * (scale / 250), 0), 2 * Math.PI, false);
+                            radius, 
+                            2 * Math.PI, false);
                         context.fill()
                     }
                 });
+
+                // Draw chart.
+                if (activeDot) {
+
+                    drawChart();
+                }
             }   // drawWorld
 
             const handleResize = () => {
@@ -141,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 projection.translate(center);
                 projection.scale(Math.min(center[0] * 0.9, 
                     center[1] * 0.9));
+                baseScale = projection.scale();
             };
             window.addEventListener("resize", handleResize);
             handleResize();
@@ -153,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Get percent across the transition.
                     const ms = (new Date().getTime() - targetRotationSetTime);
                     let percent = ms / targetRotationInterpolateTime;
+                    let rotateNew = null;
                     if (percent >= 1) {
 
                         rotateNew = targetRotation;
@@ -167,11 +228,32 @@ document.addEventListener("DOMContentLoaded", () => {
                             targetRotation[2] * usePercent + sourceRotation[2] * (1.0 - usePercent)
                         ];
                     }
-                } else {
+                    projection.rotate(rotateNew);
+                } else if (projection.scale() === baseScale) {
 
-                    rotateNew = [rotate[0] + 0.03, rotate[1], rotate[2]];
+                    let rotateNew = [rotate[0] + 0.03, rotate[1], rotate[2]];
+                    projection.rotate(rotateNew);
                 }
-                projection.rotate(rotateNew);
+
+                // Scale too.
+                if (targetScale) {
+
+                    // Get percent across the transition.
+                    const ms = (new Date().getTime() - targetScaleSetTime);
+                    let percent = ms / targetScaleInterpolateTime;
+                    let scaleNew = null;
+                    if (percent >= 1) {
+
+                        scaleNew = targetScale;
+                        targetScale = null;
+                    } else {
+
+                        const usePercent = Math.sin(Math.PI / 2.0 * percent);
+                        scaleNew = targetScale * usePercent + sourceScale * (1.0 - usePercent);
+                    }
+                    projection.scale(scaleNew);
+                }
+
                 drawWorld();
                 requestAnimationFrame(rotateSlowly);
             }
@@ -199,13 +281,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
             canvas.node().addEventListener("click", (event) => {
 
+                if (activeDot) {
+
+                    activeDot = null;
+                    return;
+                }
+
+                // Get where the cursor is.
                 var pixelCoordinates = [event.clientX, event.clientY];
+
+                // Figure out if inside the sphere.
                 var dist = Math.sqrt(Math.pow(pixelCoordinates[0] - center[0], 2) + 
                     Math.pow(pixelCoordinates[1] - center[1], 2));                
                 var scale = projection.scale();
                 if (dist < scale) {
 
+                    // Cast to {long, lat}.
                     var globeCoordinates = projection.invert(pixelCoordinates);
+
+                    // Pick the nearest dot.
+                    let minimumDistance = Infinity;
+                    data.forEach((item) => {
+
+                        // Calculate the distance from the dot to the click.
+                        const distanceToClick = Math.sqrt(Math.pow(globeCoordinates[0] - item.Long, 2) + 
+                            Math.pow(globeCoordinates[1] - item.Lat, 2));
+                        if (distanceToClick < minimumDistance) {
+
+                            minimumDistance = distanceToClick;
+                            activeDot = item;
+                        }
+                    });
+                    globeCoordinates = [activeDot.Long, activeDot.Lat];
+
                     sourceRotation = projection.rotate();
                     targetRotation = [-globeCoordinates[0], -globeCoordinates[1], 0];
 
@@ -216,6 +324,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     targetRotationSetTime = new Date().getTime();
+
+                    //////////////////////////////
+                    // Now set up target scaling.
+
+                    // First, have to cancel any pending scale reduction.
+                    if (scaleCookie) {
+
+                        clearTimeout(scaleCookie);
+                        scaleCookie = null;
+                    }
+
+                    // Now, set the "return to base" scale timeout.
+                    scaleCookie = setTimeout(() => {
+
+                        sourceScale = projection.scale();
+                        targetScale = baseScale;
+                        targetScaleSetTime = new Date().getTime();
+                    }, scaleResetTime);
+
+                    // Now, set the "zoom in" scale.
+                    sourceScale = projection.scale();
+                    targetScale = baseScale * zoomInScaleFactor;
+                    targetScaleSetTime = new Date().getTime();
                 }
             });
 
