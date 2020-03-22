@@ -75,12 +75,12 @@ module.exports = class COVID19 {
 
                                 lastValue = thisValue;
                             }
-                            if (thisValue < lastValue) {
+                            if (thisValue < lastValue || isNaN(thisValue)) {
 
                                 thisValue = lastValue;
                             }
+                            data["dates"][new Date(attribute)] = thisValue;
                             lastValue = thisValue;
-                            data["dates"][new Date(attribute)] = parseInt(bit);
                         }
                     });
 

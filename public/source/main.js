@@ -7,19 +7,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
 
-        // Grab references to the input fields.
-        const rotationLambda = document.getElementById("rotationLambda");
-        const rotationPhi = document.getElementById("rotationPhi");
-        const rotationGamma = document.getElementById("rotationGamma");
-        const scaleValue = document.getElementById("scaleValue");
-        const projectionType = document.getElementById("projectionType");
-//        const dataType = document.getElementById("dataType");
+        var width = 0;
+        var height = 0;
+        var center = [0,0];
+        var sourceRotation = null;
+        var targetRotation = null;
+        var targetRotationSetTime = null;
+        var targetRotationInterpolateTime = 300;
 
-        // Get the data.
-        post('/data', { 
+        var sphere = {
+            
+            type: 'Sphere'
+        };
+        var graticule = d3.geoGraticule();
 
-            type: "confirmed" 
-        }).then((data) => {
+        // set up the main canvas and the projection 
+        var canvas = d3.select('body').append('canvas');
+        var context = canvas.node().getContext('2d');
+
+        var projection = d3.geoOrthographic()
+            .clipAngle(90);
+
+        var path = d3.geoPath()
+            .projection(projection)
+            .context(context)
+            .pointRadius(1);
+
+        d3.queue()
+            .defer(d3.json, '/data')
+            .defer(d3.json, '/geo.json')
+            .await(load);
+
+        function load(error, data, world) {
+
+            if (error) { 
+                
+                console.log(error); return; 
+            }
 
             // The dates keys is the collection of dates for which there is data.
             const dates = Object.keys(data[0].dates);
@@ -41,152 +65,121 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            const svg = d3.select('svg');
-            let center = [0, 0];
-            let projection = d3.geoOrthographic();
-            let zoomFactor = 1.0;
+            var land = topojson.feature(world, world.objects.countries);
+            var grid = graticule();
 
-            const handleResize = () => {
+            // Draw the world.
+            function drawWorld() {
 
-                const element = document.getElementById("globe");
-                const rect = element.getBoundingClientRect(); // get the bounding rectangle
-                center[0] = rect.width / 2;
-                center[1] = rect.height / 2;
+                context.clearRect(0, 0, width, height);
 
-                projection.translate(center);
-                projection.scale(Math.min(center[0] * 0.9 * zoomFactor, 
-                    center[1] * 0.9 * zoomFactor));
-            };
+                context.beginPath(); 
+                path(sphere);
+                context.lineWidth = 1;
+                context.strokeStyle = '#0cc';
+                context.stroke();
 
-            // Wire project type input.
-            projectionType.addEventListener("input", (event) => {
+                context.beginPath();
+                path(grid);
+                context.lineWidth = .5;
+                context.strokeStyle = '#ddd';
+                context.stroke();
 
-                // .
-                svg.selectAll("*").remove();
+                context.beginPath();
+                path(land);
+                context.fillStyle = '#ccc';
+                context.fill();
 
-                const projectionValue = event.target.options[event.target.selectedIndex].value;
-                projection = d3[projectionValue]();
-                handleResize();
+                context.lineWidth = .5;
+                context.strokeStyle = '#fff';
+                context.stroke();
 
-                markerGroup = svg.append('g');
-                path = d3.geoPath().projection(projection);
-                drawGlobe();
-                drawGraticule();
-            });
+                context.fillStyle = "rgba(96, 0, 0, 0.75";
+                data.forEach((datum) => {
 
-            window.addEventListener("resize", handleResize);
-            handleResize();
+                    const coordinate = [datum.Long, datum.Lat];
+                    const gdistance = d3.geoDistance(coordinate, projection.invert(center));
+                    if (gdistance < Math.PI / 2.0) {
 
-          	const config = {
-
-                speed: 0.01,
-                verticalTilt: -30,
-                horizontalTilt: 0
-            };
-            let markerGroup = svg.append('g');
-            let path = d3.geoPath().projection(projection);
-
-            drawGlobe();
-            drawGraticule();
-            enableRotation();
-
-            function drawGlobe() {  
-                d3.queue()
-                    .defer(d3.json, 'https://gist.githubusercontent.com/mbostock/4090846/raw/d534aba169207548a8a3d670c9c2cc719ff05c47/world-110m.json')          
-                    .await((error, worldData) => {
-                        svg.selectAll(".segment")
-                            .data(topojson.feature(worldData, worldData.objects.countries).features)
-                            .enter()
-                                .append("path")
-                                .attr("class", "segment")
-                                .attr("d", path)
-                                .style("stroke", "#eee")
-                                .style("stroke-width", "1px")
-                                .style("fill", (d, i) => '#222')
-                                .style("opacity", ".25");
-                            drawMarkers();                   
-                    });
-            }
-
-            function drawGraticule() {
-                const graticule = d3.geoGraticule()
-                    .step([10, 10]);
-
-                svg.append("path")
-                    .datum(graticule)
-                    .attr("class", "graticule")
-                    .attr("d", path)
-                    .style("fill", "#fff")
-                    .style("stroke", "#ccc");
-            }
-
-            function enableRotation() {
-
-                d3.timer((elapsed) => {
-
-                    const initialRotation = projection.rotate();
-                    initialRotation[0] = config.speed * elapsed;
-                    projection.rotate(initialRotation);
-                    svg.selectAll("path").attr("d", path);
-                    drawMarkers();
-                });
-            }        
-
-            function drawMarkers() {
-
-                const markers = markerGroup.selectAll('circle')
-                    .data(data);
-                markers
-                    .enter()
-                    .append('circle')
-                    .on("pointerdown", (d) => {
-
-                        alert("on click" + d.Long);
-                    })
-                    .merge(markers)
-                    .attr('cx', (d) => {
-
-                        return projection([d.Long, d.Lat])[0]
-                    })
-                    .attr('cy', (d) => {
-
-                        return projection([d.Long, d.Lat])[1]
-                    })
-                    .attr('fill', (d) => {
-
-                        const coordinate = [d.Long, d.Lat];
-                        gdistance = d3.geoDistance(coordinate, projection.invert(center));
-                        return gdistance > Math.PI / 2.0 ? 'none' : 'rgba(96,0,0,0.75)';
-                    })
-                    .attr('r', (d) => {
-
-                        const coordinate = [d.Long, d.Lat];
-                        const gdistance = d3.geoDistance(coordinate, projection.invert(center));
                         const distPercent = 1.0 - (gdistance / (Math.PI / 2.0)) * 0.95;
+                        const pixelCoordinates = projection([datum.Long, datum.Lat]);
 
-                        let theValue = d.logValue;
+                        let theValue = datum.logValue;
                         if (theValue === -Infinity || 
                             theValue === Infinity ||
                             isNaN(theValue)) {
 
                             theValue = 0.0;
                         }
+
+                        const scale = projection.scale();
                         const percent = (theValue / maxValue) * distPercent;
                         if (isNaN(percent)) {
 
                             return 0;
                         }
-                        return Math.max(percent * 24 * (scaleValue.value / 100.0) * zoomFactor, 0);
-                    });
 
-                markerGroup.each(function () {
-                    
-                    this.parentNode.appendChild(this);
+                        context.beginPath();
+                        context.arc(pixelCoordinates[0], pixelCoordinates[1], 
+                            Math.max(percent * 16 * (scale / 250), 0), 2 * Math.PI, false);
+                        context.fill()
+                    }
                 });
-            }
+            }   // drawWorld
 
+            const handleResize = () => {
+
+                const element = document.body;
+                const rect = element.getBoundingClientRect(); // get the bounding rectangle
+                width = rect.width;
+                height = rect.height;
+                center[0] = width / 2;
+                center[1] = height / 2;
+
+                canvas.attr("width", width).attr("height", height);
+
+                projection.translate(center);
+                projection.scale(Math.min(center[0] * 0.9, 
+                    center[1] * 0.9));
+            };
+            window.addEventListener("resize", handleResize);
+            handleResize();
+
+            const rotateSlowly = () => {
+
+                let rotate = projection.rotate();
+                if (targetRotation) {
+
+                    // Get percent across the transition.
+                    const ms = (new Date().getTime() - targetRotationSetTime);
+                    let percent = ms / targetRotationInterpolateTime;
+                    if (percent >= 1) {
+
+                        rotateNew = targetRotation;
+                        targetRotation = null;
+                    } else {
+
+                        const usePercent = Math.sin(Math.PI / 2.0 * percent);
+                        rotateNew = [
+
+                            targetRotation[0] * usePercent + sourceRotation[0] * (1.0 - usePercent),
+                            targetRotation[1] * usePercent + sourceRotation[1] * (1.0 - usePercent),
+                            targetRotation[2] * usePercent + sourceRotation[2] * (1.0 - usePercent)
+                        ];
+                    }
+                } else {
+
+                    rotateNew = [rotate[0] + 0.03, rotate[1], rotate[2]];
+                }
+                projection.rotate(rotateNew);
+                drawWorld();
+                requestAnimationFrame(rotateSlowly);
+            }
+            rotateSlowly();
+
+            // Process dragging.
             let v0, q0, r0;
-  
+
             function dragstarted() {
         
                 v0 = versor.cartesian(projection.invert([d3.event.x, d3.event.y]));
@@ -200,18 +193,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 projection.rotate(versor.rotation(q1));
             }
 
-            d3.selectAll("path").call(d3.drag().on("start", dragstarted).on("drag", dragged));
-            
-            svg.call(d3.zoom()
-                .extent([[0, 0], [center[0] * 2, center[1] * 2]])
-                .scaleExtent([0.25, 4])
-                .on("zoom", function () {
+            canvas.call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged));
 
-                    svg.attr("transform", `scale(${d3.event.transform.k})`);
-                }));
+            canvas.node().addEventListener("click", (event) => {
 
+                var pixelCoordinates = [event.clientX, event.clientY];
+                var dist = Math.sqrt(Math.pow(pixelCoordinates[0] - center[0], 2) + 
+                    Math.pow(pixelCoordinates[1] - center[1], 2));                
+                var scale = projection.scale();
+                if (dist < scale) {
 
-        });
+                    var globeCoordinates = projection.invert(pixelCoordinates);
+                    sourceRotation = projection.rotate();
+                    targetRotation = [-globeCoordinates[0], -globeCoordinates[1], 0];
+
+                    // Don't wrap around the whole world.
+                    if (sourceRotation[0] - targetRotation[0] > 180) {
+
+                        targetRotation = [360 - globeCoordinates[0], -globeCoordinates[1], 0];
+                    }
+
+                    targetRotationSetTime = new Date().getTime();
+                }
+            });
+
+        }   // load
     } catch (x) {
 
         alert(x.message);

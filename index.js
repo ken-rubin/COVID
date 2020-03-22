@@ -18,7 +18,7 @@ app.post('/geo', async (req, res) => {
     res.json(result);
 });
 
-app.post('/data', async (req, res) => {
+app.get('/data', async (req, res) => {
 
     const result = await covid19.load();
     res.json(result);
