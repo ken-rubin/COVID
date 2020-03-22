@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var targetScaleInterpolateTime = 1000;
         var scaleCookie = null;
         var scaleResetTime = 7500;
-        var zoomInScaleFactor = 6;
+        var zoomInScaleFactor = 10;
 
         var sphere = {
             
@@ -198,8 +198,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.attr("width", width).attr("height", height);
 
                 projection.translate(center);
-                projection.scale(Math.min(center[0] * 0.9, 
-                    center[1] * 0.9));
+                projection.scale(Math.min(center[0] * 2, 
+                    center[1] * 2));
                 baseScale = projection.scale();
             };
             window.addEventListener("resize", handleResize);
@@ -348,6 +348,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     targetScale = baseScale * zoomInScaleFactor;
                     targetScaleSetTime = new Date().getTime();
                 }
+            });
+
+            // Zing.
+            var myRegion = new ZingTouch.Region(canvas.node());
+            myRegion.bind(canvas.node(), 'expand', function(e) {
+            
+            	console.log('Expand gesture emitted: ' + e.detail.change);
+            });
+            myRegion.bind(canvas.node(), 'pinch', function(e) {
+            
+            	console.log('Pinch gesture emitted: ' + e.detail.change);
+            });
+            myRegion.bind(canvas.node(), 'tap', function(e) {
+            
+            	console.log('Tap gesture emitted: ' + e.detail.interval);
             });
 
         }   // load
