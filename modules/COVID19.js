@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const theURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
+const theURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
 
 // Expose class whose instances expose up-to-date, parsed COVID-19 data via load.
 module.exports = class COVID19 {
@@ -30,61 +30,80 @@ module.exports = class COVID19 {
                 if (first) {
 
                     first = false;
+
                     attributes = line.split(",");
+                    attributes.shift();
+                    attributes.shift();
+                    attributes.shift();
+                    attributes.shift();
                 } else {
 
-                    const data = {};
                     const bits = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
-                    // Province/State,Country/Region,Lat,Long,1/22/20,1/23/20,1/24/20,1/25/20,1/26/20,1/27/20,1/28/20,1/29/20,1/30/20,1/31/20,2/1/20,2/2/20,2/3/20,2/4/20,2/5/20,2/6/20,2/7/20,2/8/20,2/9/20,2/10/20,2/11/20,2/12/20,2/13/20,2/14/20,2/15/20,2/16/20,2/17/20,2/18/20,2/19/20,2/20/20,2/21/20,2/22/20,2/23/20,2/24/20,2/25/20,2/26/20,2/27/20,2/28/20,2/29/20,3/1/20,3/2/20,3/3/20,3/4/20,3/5/20,3/6/20,3/7/20,3/8/20,3/9/20,3/10/20,3/11/20,3/12/20,3/13/20,3/14/20
+                    const region = bits.shift();
+                    let regionless = true;
+                    if (region) {
+
+                        regionless = false;
+                    }
+                    const country = bits.shift();
+                    const lat = parseFloat(bits.shift());
+                    const long = parseFloat(bits.shift());
+
+                    // Allocate or get country.
+                    let data = stats.find((item) => {
+
+                        return item.country === country;
+                    });
+                    if (!data) {
+
+                        data = {
+
+                            country,
+                            Lat: lat,
+                            Long: long,
+                            dates: {}
+                        };
+                        stats.push(data);
+                    }
+
+                    if (regionless) {
+
+                        data.Lat = lat;
+                        data.Long = long;
+                    }
+
+                    // 1/22/20, 1/23/20, 1/24/20, ..., today.
 
                     let i = 0;
                     let lastValue = 0;
+                    const dates = data.dates;
                     attributes.forEach((attribute) => {
 
                         let bit = bits[i++];
 
-                        if (attribute === "Province/State") {
+                        let thisValue = parseInt(bit);
+                        if (!lastValue) {
 
-                            data[attribute] = bit;
-                        } else if (attribute === "Country/Region") {
-
-                            data[attribute] = bit;
-                        } else if (attribute === "Lat") {
-
-                            data[attribute] = parseFloat(bit);
-                            if (isNaN(data[attribute])) {
-
-                                data[attribute] = 0;
-                            }
-                        } else if (attribute === "Long") {
-
-                            data[attribute] = parseFloat(bit);
-                            if (isNaN(data[attribute])) {
-
-                                data[attribute] = 0;
-                            }
-                        } else /* date... */ {
-
-                            if (!data["dates"]) {
-
-                                data["dates"] = {};
-                            }
-                            let thisValue = parseInt(bit);
-                            if (!lastValue) {
-
-                                lastValue = thisValue;
-                            }
-                            if (thisValue < lastValue || isNaN(thisValue)) {
-
-                                thisValue = lastValue;
-                            }
-                            data["dates"][new Date(attribute)] = thisValue;
                             lastValue = thisValue;
                         }
-                    });
+                        if (thisValue < lastValue || isNaN(thisValue)) {
 
-                    stats.push(data);
+                            thisValue = lastValue;
+                        }
+
+                        let thisDate = new Date(attribute);
+                        if (!dates[thisDate]) {
+
+                            dates[thisDate] = thisValue;
+                        } else {
+
+                            dates[thisDate] = dates[thisDate] + 
+                                thisValue;
+                        }
+
+                        lastValue = thisValue;
+                    });
                 }
             });
 

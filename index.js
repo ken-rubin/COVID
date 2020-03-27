@@ -12,23 +12,17 @@ app.use(express.json({
   limit: 10000
 }));
 
-app.post('/geo', async (req, res) => {
-
-    const result = await covid19.load();
-    res.json(result);
-});
-
 app.get('/data', async (req, res) => {
 
-    const result = await covid19.load();
-    res.json(result);
+  const result = await covid19.load();
+  res.json(result);
 });
 
 app.use(express.static(path.join(__dirname,
   'public')));
 
 app.listen(port, () => {
-    
-    console.log(`Server listening on port: ${port}!`)
+
+  console.log(`Server listening on port: ${port}!`)
 });
 

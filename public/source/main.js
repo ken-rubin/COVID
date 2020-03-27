@@ -21,8 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
         var targetScaleSetTime = null;
         var targetScaleInterpolateTime = 1000;
         var scaleCookie = null;
-        var scaleResetTime = 7500;
+        var scaleResetTime = 2500;
         var zoomInScaleFactor = 10;
+        var baseZoomFactor = 0.9
 
         var sphere = {
             
@@ -51,7 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (error) { 
                 
-                console.log(error); return; 
+                console.log(error); 
+                return; 
             }
 
             // The dates keys is the collection of dates for which there is data.
@@ -103,13 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 context.fillStyle = "rgba(0,0,0,0.4)";
                 context.fillRect(chartLeft + titleLeft, chartTop + titleTop, titleWidth, titleHeight);
                 context.textBaseline = "middle";
-                context.textAlign = "center";
+                context.textAlign = "start";
                 context.fillStyle = "white";
                 context.font = titleFont;
-                context.fillText(`${activeDot["Country/Region"]} ${activeDot["Province/State"]}`, 
+                context.fillText(`${activeDot["country"]}`, 
                     chartLeft + titleLeft + titleWidth / 2, 
                     chartTop + titleTop + titleHeight / 2,
-                    200);
+                    titleWidth);
             };
 
             // Draw the world.
@@ -198,8 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.attr("width", width).attr("height", height);
 
                 projection.translate(center);
-                projection.scale(Math.min(center[0] * 2, 
-                    center[1] * 2));
+                projection.scale(Math.min(center[0] * baseZoomFactor, 
+                    center[1] * baseZoomFactor));
                 baseScale = projection.scale();
             };
             window.addEventListener("resize", handleResize);
