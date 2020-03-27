@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var targetRotation = null;
         var targetRotationSetTime = null;
         var targetRotationInterpolateTime = 500;
-        var activeDot = null;
+        var chart = null;
         var baseScale = null;
         var sourceScale = null;
         var targetScale = null;
@@ -43,12 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .context(context)
             .pointRadius(1);
 
-        d3.queue()
-            .defer(d3.json, '/data')
-            .defer(d3.json, '/geo.json')
-            .await(load);
-
-        function load(error, data, world) {
+        const load = (error, data, world) => {
 
             if (error) { 
                 
@@ -68,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Take the log because ...Hubei....
                 item.logValue = Math.log(itemValue);
+                item.maxValue = itemValue;
 
                 // Remember the max.
                 if (item.logValue > maxValue) {
@@ -79,43 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
             var land = topojson.feature(world, world.objects.countries);
             var grid = graticule();
 
-            const drawChart = () => {
-
-                // Define chart bounds.
-                var windowWidth = window.innerWidth;
-                var windowHeight = window.innerHeight;
-
-                var chartLeft = windowWidth * 0.1;
-                var chartTop = windowHeight * 0.05;
-                var chartWidth = windowWidth * 0.8;
-                var chartHeight = windowHeight * 0.2;
-
-                var titleLeft = chartWidth * 0.001;
-                var titleTop = chartHeight * 0.005;
-                var titleWidth = chartWidth * 0.998;
-                var titleHeight = chartHeight * 0.1;
-
-                var titleFont = `${titleHeight.toFixed(2)}px Arial`;
-
-                // Background.
-                context.fillStyle = "rgba(0,0,0,0.4)";
-                context.fillRect(chartLeft, chartTop, chartWidth, chartHeight);
-
-                // Title.
-                context.fillStyle = "rgba(0,0,0,0.4)";
-                context.fillRect(chartLeft + titleLeft, chartTop + titleTop, titleWidth, titleHeight);
-                context.textBaseline = "middle";
-                context.textAlign = "start";
-                context.fillStyle = "white";
-                context.font = titleFont;
-                context.fillText(`${activeDot["country"]}`, 
-                    chartLeft + titleLeft + titleWidth / 2, 
-                    chartTop + titleTop + titleHeight / 2,
-                    titleWidth);
-            };
-
             // Draw the world.
-            function drawWorld() {
+            const drawWorld = () => {
 
                 context.clearRect(0, 0, width, height);
 
@@ -165,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
 
                         var radius = Math.max(percent * 16 * (scale / 250), 0);
-                        if (datum === activeDot) {
+                        if (chart && datum === chart.data) {
 
                             context.fillStyle = "rgba(196, 196, 0, 1";
                         } else {
@@ -182,9 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 // Draw chart.
-                if (activeDot) {
+                if (chart) {
 
-                    drawChart();
+                    chart.render(context);
                 }
             }   // drawWorld
 
@@ -264,18 +225,18 @@ document.addEventListener("DOMContentLoaded", () => {
             // Process dragging.
             let v0, q0, r0;
 
-            function dragstarted() {
+            const dragstarted = () => {
         
                 v0 = versor.cartesian(projection.invert([d3.event.x, d3.event.y]));
                 q0 = versor(r0 = projection.rotate());
-            }
+            };
 
-            function dragged() {
+            const dragged = () => {
 
                 const v1 = versor.cartesian(projection.rotate(r0).invert([d3.event.x, d3.event.y]));
                 const q1 = versor.multiply(q0, versor.delta(v0, v1));
                 projection.rotate(versor.rotation(q1));
-            }
+            };
 
             canvas.call(d3.drag()
                 .on("start", dragstarted)
@@ -283,9 +244,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             canvas.node().addEventListener("click", (event) => {
 
-                if (activeDot) {
+                // Toggle off the chart, if already allocated.
+                if (chart) {
 
-                    activeDot = null;
+                    chart = null;
                     return;
                 }
 
@@ -311,10 +273,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (distanceToClick < minimumDistance) {
 
                             minimumDistance = distanceToClick;
-                            activeDot = item;
+                            chart = new Chart(item);
                         }
                     });
-                    globeCoordinates = [activeDot.Long, activeDot.Lat];
+                    if (chart) {
+
+                        globeCoordinates = [chart.data.Long, chart.data.Lat];
+                    }
 
                     sourceRotation = projection.rotate();
                     targetRotation = [-globeCoordinates[0], -globeCoordinates[1], 0];
@@ -367,7 +332,13 @@ document.addEventListener("DOMContentLoaded", () => {
             	console.log('Tap gesture emitted: ' + e.detail.interval);
             });
 
-        }   // load
+        }   // load.
+
+        // Get data, start up simulation.
+        d3.queue()
+            .defer(d3.json, '/data')
+            .defer(d3.json, '/geo.json')
+            .await(load);
     } catch (x) {
 
         alert(x.message);
