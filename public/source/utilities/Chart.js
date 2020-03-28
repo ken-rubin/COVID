@@ -8,7 +8,7 @@ class Chart {
 
         this.data = data;
         this.createdAt = new Date().getTime();
-        this.scaleInDuration = 500;
+        this.scaleInDuration = 1250;
     }
 
     render(context) {
@@ -22,7 +22,7 @@ class Chart {
             this.chartLeft = this.windowWidth * 0.1;
             this.chartTop = this.windowHeight * 0.05;
             this.chartWidth = this.windowWidth * 0.8;
-            this.chartHeight = this.windowHeight * 0.2;
+            this.chartHeight = this.windowHeight * 0.4;
 
             this.titleLeft = this.chartWidth * 0.004;
             this.titleTop = this.chartHeight * 0.005;
@@ -78,11 +78,25 @@ class Chart {
                 const aDate = this.data.dates[dates[i]];
                 const datePercent = aDate * fadeInPercent / this.data.maxValue;
 
-                context.fillStyle = "rgba(128,0,0,0.75)";
+                context.fillStyle = `rgba(100,100, 100,${(1 - fadeInPercent)})`;
+                context.fillRect(this.chartLeft + this.barsLeft + barWidth * (i + 0.15),
+                    this.chartTop + this.barsTop,
+                    barWidth * 0.7,
+                    this.barsHeight);
+
+                context.fillStyle = `rgba(255,255,255,${fadeInPercent * 0.75})`;
                 context.fillRect(this.chartLeft + this.barsLeft + barWidth * (i + 0.15),
                     this.chartTop + this.barsTop + this.barsHeight * (1 - datePercent),
                     barWidth * 0.7,
                     this.barsHeight * datePercent);
+                context.strokeStyle = `rgba(50,0,0,${fadeInPercent / 2.0})`;
+                context.beginPath();
+                context.rect(this.chartLeft + this.barsLeft + barWidth * (i + 0.15),
+                    this.chartTop + this.barsTop + this.barsHeight * (1 - datePercent),
+                    barWidth * 0.7,
+                    this.barsHeight * datePercent);
+                context.lineWidth = 0.5;
+                context.stroke();
             }
 
         } catch (x) {
